@@ -1,0 +1,1 @@
+apt-get install libtemplate-plugin-class-perl libclass-dbi-mysql-perl libclass-dbi-perl libtemplate-perl libcgi-session-perl libclass-dbi-plugin-perl libtime-piece-mysql-perl libtime-piece-perl

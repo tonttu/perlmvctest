@@ -145,3 +145,6 @@ scripts/init_db
  * Käytännössä pulauttaa aktiivisen ympäristön määrittelemään tietokantaan
    config/db.sql:ssä määritellyt taulut. Tämä ei ole todellakaan oikea tapa
    luoda tauluja, mutta kelpaa paremman puutteessa.
+
+scripts/apt-get
+ * Asentaa tarvittavat deb-paketit

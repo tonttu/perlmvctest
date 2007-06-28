@@ -1,7 +1,7 @@
 ## 1 Asenna tarvittavat paketit (Ubuntu Feistyssä ainakin toimii, myös
 ##   uusimmasta Debianista pitäisi varmaan löytyä samat paketit).
 ##   Pakettilista ei välttämättä ole ihan täydellinen..
-$ scripts/apt-get
+$ sudo scripts/apt-get
 
 ## 2a Luodaan tietokannat, käyttäjät ja konfiguraatio
 $ scripts/gen_db hours hours && mv db.ini config/
