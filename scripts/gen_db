@@ -1,0 +1,59 @@
+#!/bin/sh
+
+if test $# -ne 2; then
+	echo 1>&2 Usage: $0 database_prefix username_prefix
+	exit 1
+fi
+
+# Generoidaan salasanat
+dev_passwd=`pwgen -s1`
+pro_passwd=`pwgen -s1`
+test_passwd=`pwgen -s1`
+
+if test "x$dev_passwd" == "x"; then
+	echo 1>&2 Cannot find pwgen
+	exit 2;
+fi
+
+echo "Generating development, production and test databases"
+echo "database prefix:   $1"
+echo "user prefix:       $2"
+echo ""
+echo "Writing output to db.ini"
+echo ""
+
+echo "Now is the last time to interrupt with ctrl+c.."
+read -sn1
+
+echo "[dev]
+dbi = dbi:mysql:$1_dev
+user = $2_dev
+passwd = $dev_passwd
+
+[prd]
+dbi = dbi:mysql:$1_prod
+user = $2_prod
+passwd = $pro_passwd
+
+[test]
+dbi = dbi:mysql:$1_test
+user = $2_test
+passwd = $test_passwd" > db.ini
+
+mysqladmin -u root create $1_dev
+mysqladmin -u root create $1_prod
+mysqladmin -u root create $1_test
+
+echo "CREATE USER '$2_dev'@'localhost' IDENTIFIED BY '$dev_passwd';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON \`$1_dev\`.* TO '$2_dev'@'localhost';
+
+CREATE USER '$2_prod'@'localhost' IDENTIFIED BY '$pro_passwd';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON \`$1_prod\`.* TO '$2_prod'@'localhost';
+
+CREATE USER '$2_test'@'localhost' IDENTIFIED BY '$test_passwd';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON \`$1_test\`.* TO '$2_test'@'localhost';" | mysql -u root
+
+echo "done."

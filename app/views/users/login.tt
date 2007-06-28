@@ -1,0 +1,14 @@
+[% WRAPPER shared/page.tt + shared/clean.tt %]
+[% USE CGI %]
+
+<div id="login">
+	[% CGI.start_form('-action' => '/users/login') %]
+		<p><label>login</label>
+			[% CGI.textfield('login', '', 20, 40) %]</p>
+		<p><label>password</label>
+			[% CGI.password_field('passwd', '', 20, 40) %]</p>
+		<p>[% CGI.submit('loginbtn', 'Login') %]</p>
+	[% CGI.end_form +%]
+</div>
+
+[% END %]

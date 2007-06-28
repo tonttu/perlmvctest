@@ -1,0 +1,20 @@
+#!/usr/bin/perl -w
+use strict;
+use File::Basename qw/ dirname /;
+use Config::IniFiles;
+
+my %cfg;
+tie %cfg, 'Config::IniFiles', (-file => dirname(__FILE__) . '/../config/db.ini');
+
+my $env = $ENV{'HOURS_ENV'} || 'dev';
+my $sqlfile = dirname(__FILE__) . "/../config/db.sql";
+
+my ($dbi, $u, $p) = @{$cfg{$env}}{'dbi', 'user', 'passwd'};
+my ($type, $db) = (split /:/, $dbi)[1,2];
+
+if ($type eq 'mysql') {
+	system("mysql -u $u -p$p $db");
+	exit 0;
+}
+print "nope: $type\n";
+exit 1;

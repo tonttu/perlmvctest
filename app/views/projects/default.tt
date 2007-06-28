@@ -1,0 +1,45 @@
+<h2>Projects</h2>
+[% USE CGI -%]
+[% url = project.id ? "/projects/modify/${project.id}" : "/projects/create" -%]
+[% CGI.start_form('-action' => url) %]
+	<table border="0" cellspacing="0" cellpadding="0" class="input">
+		<tr valign="top">
+			<th><p>Client</p></th>
+			<td><p>[% CGI.textfield('project.client', project.client, 30, 40) %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>Project</p></th>
+			<td><p>[% CGI.textfield('project.name', project.name, 30, 40) %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>Hourly rate</p></th>
+			<td><p>[% CGI.textfield('project.rate', project.rate, 5, 10) %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>Completed</p></th>
+			<td><p>[% CGI.checkbox('project.completed', project.completed, '1', '') %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>&nbsp;</p></th>
+			<td><p>[% CGI.submit('save', 'Save') %]</p></td>
+		</tr>
+	</table>
+</form>
+[%# CGI.end_form %]
+
+<div class="projectList">
+	[% FOREACH p = projects_active %]
+		<div[% (p.id == project.id) ? ' class="active"' : '' %]>
+			<a href="/projects/modify/${p.id}">${p.client} / ${p.name}</a>
+		</div>
+	[% END %]
+
+	<div class="spacer"></div>
+
+	[% FOREACH p = projects_completed %]
+		<div[% (p.id == project.id) ? ' class="active"' : '' %]>
+			<a class="completed" href="/projects/modify/${p.id}">${p.client} / ${p.name}</a>
+		</div>
+	[% END %]
+</div>
+

@@ -1,0 +1,19 @@
+<h2>Payments</h2>
+<form method="post" action="/testps/index.php" enctype="application/x-www-form-urlencoded">
+	<table border="0" cellspacing="0" cellpadding="0" class="input">
+		<input type="hidden" name="action" value="savePayment"/><tr valign="top"><th><p>Payment</p></th><td><p><input type="text" name="payment" value="" size="20" /></p></td>
+		</tr>
+		<tr valign="top"><th><p>Amount</p></th><td><p><input type="text" name="amount" value="" size="5" /></p></td>
+		</tr>
+		<tr valign="top"><th><p>&nbsp;</p></th><td><p><input type="submit" name="submit" value="Save"/></p></td>
+
+		</tr>
+	</table>
+</form>
+<div class="paymentList">
+	<div>12.10.06 <a href="/testps/index.php?action=editPayment&amp;paymentId=1160649788">Lokakuun ennakko: 666 &euro;</a></div>
+	<div>11.06.07 <a href="/testps/index.php?action=editPayment&amp;paymentId=1181595528">344:  &euro;</a></div>
+	<div class="total">Total payments: <b>666 &euro;</b></div>
+	<div class="balance">Current balance: 2829 &euro;</div>
+</div>
+

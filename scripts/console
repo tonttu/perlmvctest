@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+use strict;
+
+use Psh;
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+use Base;
+
+Psh::minimal_initialize;
+Psh::finish_initialize;
+Psh::initialize_interactive_mode;
+while (1) {
+	eval { Psh::main_loop; };
+	Psh::handle_message($@,'main_loop');
+}
+
+exit 0;

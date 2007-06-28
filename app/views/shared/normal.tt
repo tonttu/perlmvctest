@@ -1,0 +1,32 @@
+[% html.headers = BLOCK %]
+	<link rel="stylesheet" href="/style.css" title="PS default style" type="text/css"/>
+[% END %]
+[% WRAPPER shared/page.tt %]
+	<h1><a href="/">Axxion project summary test</a></h1>
+
+	[% IF flash_error %]
+		<p class="notice error">$flash_error</p>
+	[% END %]
+
+	[% IF flash_notice %]
+		<p class="notice">$flash_notice</p>
+	[% END %]
+	
+	<table border="0" cellspacing="0" id="master">
+		<tr valign="top">
+			<td id="projects">
+				[% INCLUDE projects/default.tt %]
+			</td>
+			<td id="tasks">
+				[% IF project %]
+					[% INCLUDE tasks/default.tt %]
+				[% ELSE %]
+					[% INCLUDE tasks/summary.tt %]
+				[% END %]
+			</td>
+			<td id="payments">
+				[% INCLUDE payments/default.tt %]
+			</td>
+		</tr>
+	</table>
+[% END %]

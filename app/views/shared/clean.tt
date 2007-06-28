@@ -1,0 +1,11 @@
+[% IF flash_error %]
+<p class="notice error">
+	$flash_error
+</p>
+[% END %]
+[% IF flash_notice %]
+<p class="notice">
+	$flash_notice
+</p>
+[% END %]
+[% content %]

@@ -1,0 +1,35 @@
+body {margin: 0px; font-size: 80%; font-family: arial, sans-serif;}
+h1 {margin: 0px; padding: 4px 10px; background: #aa0000; color: #ffffff; font-weight: normal; font-size: 140%;}
+h2 {margin: 0px 0px 10px 0px; padding: 3px 7px; background: #dddddd; font-size: 90%;}
+
+h1 a:link, h1 a:visited {color: #ffffff; text-decoration:none;}
+
+table#master {border-top: 4px solid #dddddd; width: 100%;}
+table#master td {border-right: 2px solid #dddddd; padding: 4px; text-align: left;}
+td#projects, td#tasks, td#payments {width: 33%;}
+
+a:link,a:visited {color: #006600; text-decoration: none;}
+a:hover {color: #000000; text-decoration: underline;}
+
+a.completed {color: #999999;}
+span.extraHours {color: #888888;}
+
+table#master table.input td, table#master table.input th {padding: 2px 4px; border: none;}
+table.input th {text-align:right;}
+table.input p {margin: 0px; font-weight: normal;}
+
+div.projectList, div.taskList, div.paymentList {border-top: 4px solid #dddddd; padding: 4px; margin-top: 6px;}
+div.projectList div.spacer {height: 3px; border-top: 1px dotted #aaaaaa; margin-top: 4px;}
+div.taskList div {}
+
+div.del {text-align: right; margin-top: -24px; padding: 0px 10px 3px 0px;}
+
+
+td#projects h2, td#tasks h2 {background: #ffbb22;}
+td#payments h2 {background: #99ccff;}
+
+div.total {background: #dddddd; margin: 4px 0px 0px; padding: 2px 4px;}
+div.balance {background: #dddddd; font-size: 120%; font-weight: bold; color: #006600; padding: 2px 4px;}
+
+div.active {background: #006600; color: #ffffff;}
+div.active a:link, div.active a:visited {color: #ffffff;}

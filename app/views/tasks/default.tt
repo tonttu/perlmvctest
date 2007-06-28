@@ -1,0 +1,41 @@
+<h2>Completed tasks: ${project.client} / ${project.name}</h2>
+[% USE CGI -%]
+[% url = task ? "/tasks/modify/${task.id}" : "/tasks/create" -%]
+[% CGI.start_form('-action' => url) %]
+	<table border="0" cellspacing="0" cellpadding="0" class="input">
+		<tr valign="top">
+			<th><p>Task</p></th>
+			<td><p>[% CGI.textfield('task.name', task.name, 30, 80) %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>Hours</p></th>
+			<td><p>[% CGI.textfield('task.hours', task.hours, 5, 10) %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>&nbsp;</p></th>
+			<td><p>[% CGI.checkbox('task.extra_work', task.extra_work, '1', 'Extra work') %]</p></td>
+		</tr>
+		<tr valign="top">
+			<th><p>&nbsp;</p></th>
+			<td><p>[% CGI.submit('save', 'Save') %]</p></td>
+		</tr>
+	</table>
+</form>
+
+[% IF task %]
+	<div class="del">
+		[% CGI.start_form('-action' => "/tasks/delete/${task.id}") %]
+			[% CGI.submit('delete', 'Delete') %]
+		[% CGI.end_form +%]
+	</div>
+[% END %]
+
+<div class="taskList">
+	[% FOREACH t = tasks %]
+		<div[% (t.id == task.id) ? ' class="active"' : '' %]>
+			[% t.modified.strftime('%d.%m.%y') %]
+			<a href="/tasks/modify/${t.id}">${t.name}[% t.extra_work ? ' <i>[extra]</i>' : '' %]: ${t.hours}h</a>
+		</div>
+	[% END %]
+	<div class="total">Project hours: <b>${project.hours}</b></div>
+</div>

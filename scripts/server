@@ -1,0 +1,1 @@
+lighttpd -f `dirname $0`/../config/lighttpd.conf -D 2>`dirname $0`/../log/lighttpd.log
