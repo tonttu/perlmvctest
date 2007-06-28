@@ -1,5 +1,13 @@
 #!/bin/sh
+trap stop 1 2 3 
+stop()
+{
+	kill $pid
+}
+
 cd `dirname $0`/..
 b=`pwd`
 sed "s:__HOME__:$b:" <config/lighttpd.conf >tmp/lighttpd.conf
-lighttpd -f tmp/lighttpd.conf -D 2>log/lighttpd.log
+lighttpd -f tmp/lighttpd.conf
+export pid=`cat tmp/lighttpd.pid`
+tail -n0 -f log/error.log log/lighttpd.log
