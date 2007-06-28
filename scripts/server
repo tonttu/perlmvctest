@@ -1,1 +1,5 @@
-lighttpd -f `dirname $0`/../config/lighttpd.conf -D 2>`dirname $0`/../log/lighttpd.log
+#!/bin/sh
+cd `dirname $0`/..
+b=`pwd`
+sed "s:__HOME__:$b:" <config/lighttpd.conf >tmp/lighttpd.conf
+lighttpd -f tmp/lighttpd.conf -D 2>log/lighttpd.log

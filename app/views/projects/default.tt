@@ -25,7 +25,7 @@
 		</tr>
 	</table>
 </form>
-[%# CGI.end_form %]
+[%# ei toimi oikein? CGI.end_form %]
 
 <div class="projectList">
 	[% FOREACH p = projects_active %]

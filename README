@@ -1,0 +1,147 @@
+Tämä on esimerkki MVC-frameworkista ja pienestä työtuntikirjain-softasta.
+En ole tutustunut perlin dokumentointitapaan, joten kirjoitan nyt vain
+tällaisen tekstitiedoston.
+
+
+Hakemistorakenne
+----------------
+
+lib				Framework, moni eri sivusto voisi käyttää samaa framework-
+				hakemistoa.
+app				Sivusto
+app/models		Modelit, eli Class::DBI-luokat sivuston käyttämistä tauluista.
+app/controllers	Controllerit, jokaista sivun loogista kokonaisuutta vastaavat
+				komponentit, joista aina yksi on aktiivinen per sivulataus.
+app/views		Templatet, jaettuna controllerien mukaisiin hakemistoihin.
+www				HTTP-palvelimen document root, staattiset tiedostot yms.
+config			Tietokannan yms. konfiguraatiotiedostot
+scripts			Kehittämistä ja asentamista varten tehtyjä pieniä skriptejä
+
+
+Ympäristö
+---------
+
+Aina ajettaessa joko normaalia sivupyyntöä tai jotain komentorivipohjaista
+komentoa, ohjelma käyttäytyy vähän eri tavalla, riippuen mikä on ympäristö-
+muuttujan HOURS_ENV (huono nimi, koska se tällä hetkellä viittaa juuri tähän
+sovellukseen, eikä frameworkiin) arvo. Oletuksena on olemassa kolme ympäristöä:
+dev, prd ja test. Kaikilla näillä on omat tietokanta-asetuksensa, jolloin
+samaa installaatiota voi käyttää sekä testaukseen, tuotantoon ja automaattisten
+unit-testien ajamiseen, ilman että ympäristöt häiritsevät toisiaan.
+
+Jos HOURS_ENV:ä ei ole asetettu, se oletetaan dev:ksi.
+
+Peruskäsitteitä
+---------------
+
+Sivupyyntö "GET /foo/bar/2" tarkoittaa tiedostossa app/controllers/Foo.pm
+majailevan Foo-controllerin bar-actionin, eli get_bar -metodin, kutsumista
+parametrillä 2. POST-pyynnöt mappautuvat ensisijaisesti post_-prefiksattuihin
+metodeihin, mutta fallbackina on aina get_-alkuiset metodit.
+
+Esim:
+Tyypillinen url voisi olla /users/edit/3, jossa Users.pm voisi näyttää tältä:
+
+Package Users;
+<tähän periytymiset, new-metodi, strict-määrittelyt jne>
+sub get_edit {
+	my $self = shift;
+	$$self{'vars'}{'user'} = User->retrieve(shift);
+}
+sub post_edit {
+	my $self = shift;
+	my $user = User->retrieve(shift);
+	$user->set(%{$self->getvars('user.'));
+	$user->update() ? $self->flash_notice_now('User saved')
+					: $self->flash_error_now('Error while saving user');
+}
+
+$$self{'vars'} on hashref, joka viedään templateen sellaisenaan. Nyt siis
+vaikka Template Toolkit-tyyppisessä viewissä voisi käyttäjän nimen
+tulostaa näin: ${user.name}.
+
+$self->getvars('user.') palauttaa kaikki sellaiset post-parametrit hashref:nä,
+jotka alkavat "user." -merkkijonolla. Palautuksessa tämä prefix poistetaan.
+Eli jos kentät on nimettynä oikein HTML:ssä, voidaan getvars:n ulostulo suoraan
+pulauttaa set-metodille. Tässä ei nyt oteta huomioon mahdollista
+tietoturvariskiä, jos kaikkia taulun kohtia ei saa suoraan muokata.
+
+"flash" on tapa saada virhe- ja ilmoitusviestit käyttäjälle. Käytössä on neljä
+metodia: flash_{notice,error}{,_now}. _now-pääte tarkoittaa samalla
+sivunlatauksella annettavaa viestiä, kun muulloin viesti näytetään vasta
+seuraavalla sivunlatauksella. Tätä tarvitaan redirect:n kanssa:
+sub post_login {
+	my $self = shift;
+	$my login_ok = ..;
+	if ($login_ok) {
+		$self->flash_notice('Login ok');
+		$self->redirect('/frontpage');
+	} else {
+		$self->flash_error_now('Try again');
+	}
+}
+
+$self->redirect -metodilla voi ohjata käyttäjän välittömästi toiselle
+sivulle. Jos redirectiä tai muuta renderöintimuotoa ei ole erikseen
+määritelty, ajetaan view-tiedosto hakemistosta
+app/views/<lc controller>/<lc action>.*, eli äskeisessä esimerkissä
+ladattaisiin epäonnistuneen kirjautumisen yhteydessä sivu
+app/views/users/login.*
+
+Tämän toiminnallisuuden voi toki ohittaa, kuten se on tässä esimerkkiohjelmassa
+tehty. Tässä ohjelmassa toimitaan muuten edellä olevan selostuksen mukaan,
+mutta jos määriteltyä template-tiedostoa ei ole, renderöidään shared/default.*
+-view.
+
+Template voi olla monen tyyppinen, sen tiedostopääte ratkaisee miten sitä
+käsitellään. Tällä hetkellä käytössä on vain yksi tyyppi, .tt = Template
+Toolkit.
+
+
+Arkkitehtuuri / "Control flow"
+------------------------------
+
+Sivupyynnön eteneminen:
+
+1) index.pl luo uuden kontrollerin Base->factory -metodilla
+
+2) Base-luokka lataa kirjastoja ja säätää Autouse-hakemistot kuntoon.
+   Base->factory luo CGI-instanssin ja päättelee sivupyynnön perusteella,
+   minkä controllerin se luo, ja minkä actionin se myöhemmin suorittaa ja
+   millä parametreillä.
+
+3) Base->factory luo itse kontrollerin, joka periytyy Base-luokasta. Yleensä
+   käytetään sovelluskohtaista Application-kontrolleria Basen ja lopullisen
+   kontrollerin välissä. Nyt kontrolleri luo CGI::Session-olion yms.
+
+4) index.pl suorittaa luodulle oliolle render-metodin.
+
+5) Base-luokassa määritelty render-metodi ajaa triggereitä, määrittelee
+   templatelle oletusmuuttujia ja lopulta ajaa itse actionin. Tämän jälkeen
+   se päättää ollaanko tekemässä redirectiä vai näyttämässä normaalia viewiä
+   template-tiedoston avulla. Se myös etsii templaten, lataa sen tarvitseman
+   kirjaston, hoitaa headerit ja tulostaa sivun.
+
+Skriptit
+--------
+
+scripts/mysql_sh
+ * Avaa mysql-tulkin määritellyillä tietokanta-asetuksilla aktiivisella
+   ympäristöllä.
+
+scripts/console
+ * Lataa Base-luokan ja käynnistää Perl-tulkin (psh) aktiiviseen ympäristöön.
+   Tässä voi esim modeleita käyttää suoraan.
+
+scripts/server
+ * Käynnistää lighttpd-serverin testausta varten aktiiviseen ympäristöön,
+   katso sen puolidynaaminen konfiguraatio config/lighttpd.conf
+
+scripts/gen_db
+ * Luo kolme tietokantaa ja niille käyttäjät annetuilla prefixeillä, sekä
+   muodostaa tästä db.ini -konfiguraatiotiedoston.
+
+scripts/init_db
+ * Käytännössä pulauttaa aktiivisen ympäristön määrittelemään tietokantaan
+   config/db.sql:ssä määritellyt taulut. Tämä ei ole todellakaan oikea tapa
+   luoda tauluja, mutta kelpaa paremman puutteessa.

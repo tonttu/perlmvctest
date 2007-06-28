@@ -16,14 +16,14 @@ CREATE TABLE `events` (
   `target` varchar(255) NOT NULL,
   `action` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `modified` datetime NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 CREATE TABLE `payments` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `amount` int(10) unsigned NOT NULL,
-  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `modified` datetime NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;

@@ -1,0 +1,23 @@
+## 1 Asenna tarvittavat paketit (Ubuntu Feistyssä ainakin toimii, myös
+##   uusimmasta Debianista pitäisi varmaan löytyä samat paketit).
+##   Pakettilista ei välttämättä ole ihan täydellinen..
+$ scripts/apt-get
+
+## 2a Luodaan tietokannat, käyttäjät ja konfiguraatio
+$ scripts/gen_db hours hours && mv db.ini config/
+
+## 2b Vaihtoehtoisesti sörki tietokantaa itse ja räpellä config/db.ini
+##    .example -tiedoston avulla.
+
+## 3 Luo taulut
+$ scripts/init_db
+
+## 4 Luo käyttäjä ajamalla ensin:
+$ scripts/console
+## ja konsolissa sitten jotain tällaista:
+console% User->insert({login => 'admin', password => 'salasana', admin => 1});
+
+## 5a Käynnistä testipalvelin (lighttpd, oletuksena portissa 3003)
+$ scripts/server
+
+## 5b Tai säädä Apache tms. käyttöön.
