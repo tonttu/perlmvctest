@@ -1,3 +1,7 @@
+This is an example MVC framework with example project.
+Sorry, all the documentation and comments are in Finnish.
+--
+
 Tämä on esimerkki MVC-frameworkista ja pienestä työtuntikirjain-softasta.
 En ole tutustunut perlin dokumentointitapaan, joten kirjoitan nyt vain
 tällaisen tekstitiedoston.
@@ -6,16 +10,16 @@ tällaisen tekstitiedoston.
 Hakemistorakenne
 ----------------
 
-lib				Framework, moni eri sivusto voisi käyttää samaa framework-
-				hakemistoa.
-app				Sivusto
-app/models		Modelit, eli Class::DBI-luokat sivuston käyttämistä tauluista.
-app/controllers	Controllerit, jokaista sivun loogista kokonaisuutta vastaavat
-				komponentit, joista aina yksi on aktiivinen per sivulataus.
-app/views		Templatet, jaettuna controllerien mukaisiin hakemistoihin.
-www				HTTP-palvelimen document root, staattiset tiedostot yms.
-config			Tietokannan yms. konfiguraatiotiedostot
-scripts			Kehittämistä ja asentamista varten tehtyjä pieniä skriptejä
+lib             Framework, moni eri sivusto voisi käyttää samaa framework-
+                hakemistoa.
+app             Sivusto
+app/models      Modelit, eli Class::DBI-luokat sivuston käyttämistä tauluista.
+app/controllers Controllerit, jokaista sivun loogista kokonaisuutta vastaavat
+                komponentit, joista aina yksi on aktiivinen per sivulataus.
+app/views       Templatet, jaettuna controllerien mukaisiin hakemistoihin.
+www             HTTP-palvelimen document root, staattiset tiedostot yms.
+config          Tietokannan yms. konfiguraatiotiedostot
+scripts         Kehittämistä ja asentamista varten tehtyjä pieniä skriptejä
 
 
 Ympäristö
@@ -45,15 +49,15 @@ Tyypillinen url voisi olla /users/edit/3, jossa Users.pm voisi näyttää tält�
 Package Users;
 <tähän periytymiset, new-metodi, strict-määrittelyt jne>
 sub get_edit {
-	my $self = shift;
-	$$self{'vars'}{'user'} = User->retrieve(shift);
+  my $self = shift;
+  $$self{'vars'}{'user'} = User->retrieve(shift);
 }
 sub post_edit {
-	my $self = shift;
-	my $user = User->retrieve(shift);
-	$user->set(%{$self->getvars('user.'));
-	$user->update() ? $self->flash_notice_now('User saved')
-					: $self->flash_error_now('Error while saving user');
+  my $self = shift;
+  my $user = User->retrieve(shift);
+  $user->set(%{$self->getvars('user.'));
+  $user->update() ? $self->flash_notice_now('User saved')
+          : $self->flash_error_now('Error while saving user');
 }
 
 $$self{'vars'} on hashref, joka viedään templateen sellaisenaan. Nyt siis
@@ -71,14 +75,14 @@ metodia: flash_{notice,error}{,_now}. _now-pääte tarkoittaa samalla
 sivunlatauksella annettavaa viestiä, kun muulloin viesti näytetään vasta
 seuraavalla sivunlatauksella. Tätä tarvitaan redirect:n kanssa:
 sub post_login {
-	my $self = shift;
-	$my login_ok = ..;
-	if ($login_ok) {
-		$self->flash_notice('Login ok');
-		$self->redirect('/frontpage');
-	} else {
-		$self->flash_error_now('Try again');
-	}
+  my $self = shift;
+  $my login_ok = ..;
+  if ($login_ok) {
+    $self->flash_notice('Login ok');
+    $self->redirect('/frontpage');
+  } else {
+    $self->flash_error_now('Try again');
+  }
 }
 
 $self->redirect -metodilla voi ohjata käyttäjän välittömästi toiselle
